@@ -30,10 +30,11 @@ LEFT = 3
 my_direction = LEFT #quero que a cobra comece indo pra esquerda, vamos plotar na tela na função blot
 
 clock = pygame.time.Clock() #mudar o tempo de fps do jogo
+game_over = False
 
 #laço infinito para rodar o jogo continuamente
 #define-se aqui eventos do jogador (apertar botão ou outra entrada pro jogo)
-while True:
+while not game_over:
     clock.tick(20) #valor do fps
     for event in pygame.event.get():
         if event.type == QUIT: #se apertar botão de fechar
@@ -68,11 +69,26 @@ while True:
         snake[0] = (snake[0][0] + 10, snake[0][1]) # movimentando a cabeça da cobra snake[0] sendo que x aumenta na tela para a direita
     if my_direction == LEFT:
         snake[0] = (snake[0][0] - 10, snake[0][1]) # movimentando a cabeça da cobra snake[0] sendo que x diminui na tela para a esquerda
+
+   #fazer game over se tocar na parede
+    if snake[0][0] == 600 or snake[0][1] == 600 or snake[0][0] < 0 or snake[0][1] < 0:
+        game_over = True
+        break
+
+    # verificar se a cobra toca nela mesma
+    for i in range(1, len(snake) - 1):
+        if snake[0][0] == snake[i][0] and snake[0][1] == snake[i][1]:
+            game_over = True
+            break
+    if game_over:
+        break
+
     #para o restante do corpo da cobra, cada pedaço do corpo ocupa a posição que o pedaço da frente tava ocupando antes
     #se tiver indo pra esquerda, pedaço x ocupa o espaço que o pedaço da esquerda de x tava ocupando
     for i in range(len(snake)-1, 0, -1):#range(comprimento da cobra menos o rabo, vai ate posicao 0, e ir decrementando, ao invés de incrementando)
     #a posição i ocupa a posicao i-1
         snake[i] = (snake[i-1][0], snake[i-1][1])
+
 
     screen.fill((0,0,0))#limpar a tela para atualiza-la com novas informações
     screen.blit(apple, apple_pos) #printar na tela uma maçã numa posição aleatória
